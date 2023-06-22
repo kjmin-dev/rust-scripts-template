@@ -22,6 +22,11 @@ install_rustup() {
   fi
 }
 
+# Uninstall rustup
+uninstall_rustup() {
+  rustup self uninstall -y
+}
+
 # Install rustc with rustup-toolchain according to the specified version
 install_rustc_with_toolchain() {
   rustup install $1
@@ -50,13 +55,15 @@ main() {
   # Read the version from the rust-toolchain file
   version=$(cat rust-toolchain)
 
-  # Install or uninstall rustc based on the command-line argument
+  # Install, uninstall rustc, or uninstall rustup based on the command-line argument
   if [ "$1" = "install" ]; then
     echo "${YELLOW}Installing rustc $version...${NC}"
     install_rustc_with_toolchain $version
   elif [ "$1" = "uninstall" ]; then
     echo "${RED}Uninstalling rustc $version...${NC}"
     uninstall_rustc_with_toolchain $version
+    echo "${RED}Uninstalling rustup...${NC}"
+    uninstall_rustup
   else
     echo "${RED}Invalid command. Usage: ./script_name.sh [install|uninstall]${NC}"
     exit 1
