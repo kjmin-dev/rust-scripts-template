@@ -3,9 +3,9 @@
 target_packages=("cargo-watch@8.4.0" "dum@0.1.19")
 
 # ANSI escape sequences for text color
-GREEN="\e[32m"
-RED="\e[31m"
-RESET="\e[0m"
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+RESET='\033[0m'
 
 install_packages() {
   for package in "${target_packages[@]}"; do
