@@ -14,7 +14,7 @@ check_rustup_installed() {
 # Install rustup
 install_rustup() {
   if [ "$(uname)" = "Darwin" ]; then
-    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
     source $HOME/.cargo/env
   else
     curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
@@ -25,6 +25,7 @@ install_rustup() {
 # Uninstall rustup
 uninstall_rustup() {
   rustup self uninstall -y
+  rm rust-toolchain
 }
 
 # Install rustc with rustup-toolchain according to the specified version
@@ -44,16 +45,18 @@ create_rust_toolchain_file() {
 
 main() {
   # Check if rustup is installed
-  if ! check_rustup_installed; then
-    echo "${YELLOW}rustup is not installed. Installing rustup...${NC}"
-    install_rustup
-  else
-    echo "${GREEN}rustup is already installed. Updating rustup...${NC}"
-    rustup update
+  if [ "$1" = "install" ]; then
+    if ! check_rustup_installed; then
+        echo "${YELLOW}rustup is not installed. Installing rustup...${NC}"
+        install_rustup
+    else
+        echo "${GREEN}rustup is already installed. Updating rustup...${NC}"
+        rustup update
+    fi
   fi
 
   # Read the version from the rust-toolchain file
-  version=$(cat rust-toolchain)
+  version=$(cat rust-toolchain || rustc --version)
 
   # Install, uninstall rustc, or uninstall rustup based on the command-line argument
   if [ "$1" = "install" ]; then
@@ -61,11 +64,10 @@ main() {
     install_rustc_with_toolchain $version
   elif [ "$1" = "uninstall" ]; then
     echo "${RED}Uninstalling rustc $version...${NC}"
-    uninstall_rustc_with_toolchain $version
     echo "${RED}Uninstalling rustup...${NC}"
     uninstall_rustup
   else
-    echo "${RED}Invalid command. Usage: ./script_name.sh [install|uninstall]${NC}"
+    echo "${RED}Invalid command. Usage: ./scripts/rustup.sh [install|uninstall]${NC}"
     exit 1
   fi
 
