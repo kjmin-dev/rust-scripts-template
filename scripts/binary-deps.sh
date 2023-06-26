@@ -1,6 +1,6 @@
 #!/bin/bash
 
-target_packages=("cargo-watch@8.4.0" "dum@0.1.19")
+target_packages=("cargo-edit@0.12.0" "cargo-watch@8.4.0" "dum@0.1.19")
 
 # ANSI escape sequences for text color
 RED='\033[0;31m'
